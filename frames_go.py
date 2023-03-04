@@ -7,6 +7,7 @@ import numpy as np
 from PIL import Image
 
 
+
 def sort_files(source):
     paths = dict.fromkeys(source)
     val = []
@@ -62,7 +63,7 @@ if len(numframes) != 0:
         print("Кадр %d не был сохранен!" %frame)
 
 for filename in glob('./frames/*.jpg'):
-    os.system('python3 ~/Documents/YOLOX/tools/demo.py image -n yolox-s -c ~/Downloads/yolox_s.pth --path %s \
+    os.system('python3 ./YOLOX/tools/demo.py image -n yolox-s -c ./yolox_s.pth --path %s \
               --conf 0.25 --nms 0.45 --tsize 640 --save_result --device [cpu/gpu]' % filename)
     
 
