@@ -350,33 +350,25 @@ def main(exp, args):
         numframes = args.frames
         numframes = [int(frame) for frame in numframes]
         print(numframes)
+        frameSize = (1920, 1080) 
+        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        out = cv2.VideoWriter('output_video.mp4', fourcc, 30, frameSize) 
         for frame in container.decode(video=0):
             if frame.index in numframes:
                 frame.to_image().save('./frames_raw/frame_%d.jpg' % frame.index)
                 numframes.remove(frame.index)
                 print("Кадр %s успешно сохранен." % frame.index)
+                filename = ('./frames_raw/frame_%d.jpg' % frame.index)
+                args.path = filename
+                image_demo(predictor, vis_folder, args.path, current_time, args.save_result)
+                filename_out = ("".join(savepath) + "/frame_%d.jpg" % frame.index)
+                print(filename_out)
+                img = cv2.imread(filename_out) 
+                out.write(img) 
 
-        if len(numframes) != 0:
-            for frame in numframes:
-                print("Кадр %s не был сохранен!" %frame)
-        args.path = "./frames_raw"
-        image_demo(predictor, vis_folder, args.path, current_time, args.save_result)
-        #print(savepath)
-        frameSize = (1920, 1080) 
-        fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-        out = cv2.VideoWriter('output_video.mp4', fourcc, 30, frameSize) 
-
-        yolox_frames = "".join(savepath) + "/*jpg"
-        frames = glob(yolox_frames)
-        frames_s = sort_files(frames)
-
-        for filename in frames_s: 
-            img = cv2.imread(filename) 
-            out.write(img) 
-            
-        out.release()    
+        out.release()   
         
-        #imageflow_demo(predictor, vis_folder, current_time, args)
+        # imageflow_demo(predictor, vis_folder, current_time, args)
 
 
 if __name__ == "__main__":
@@ -392,4 +384,4 @@ if __name__ == "__main__":
     exp = get_exp(args.exp_file, args.name)
 
     main(exp, args)
-#python3 tools/demo.py image -n yolox-s -c ../py-inv/yolox_s.pth --path ../py-inv/frames --conf 0.7 --nms 0.45 --tsize 640 --save_result --device [cpu/gpu]
+#python3 tools/demo.py video -n yolox-s -c ../yolox_s.pth --path ./develop_streem.mp4 --conf 0.7 --nms 0.45 --tsize 640 --save_result --device [cpu/gpu] --frames=100,150,200
